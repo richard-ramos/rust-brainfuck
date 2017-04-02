@@ -1,3 +1,8 @@
+use std::env;
+use std::fs::File;
+use std::io::prelude::*;
+use std::path::Path;
+use std::io::Read;
 
 #[derive(Debug)]
 struct Brainfuck<'a> {
@@ -96,13 +101,21 @@ impl<'a> Brainfuck<'a> {
 
 
 fn main() {
-    let input = "++++
-[
-> ++++++++++
-+++++++++
-++++++
-<-
-]";
-    let mut bf = Brainfuck::new(input);
+    
+    let args: Vec<String> = env::args().collect();
+    let path = Path::new(&args[0]);
+    let mut file = File::open(&path).expect("FILE NOT FOUND");
+    let mut file_content = String::new();
+    // file.read_to_string(&mut file_content);
+    // print!("{:?}", file_content);
+
+    match file.read_to_string(&mut file_content)  {
+        Err(why)=>panic!("{}",why),
+        Ok(_)=>print!("{}",file_content),
+    }    ;
+    
+    
+    
+    let mut bf = Brainfuck::new(&file_content);
     bf.compile();
 }
