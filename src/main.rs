@@ -26,8 +26,10 @@ impl<'a> Brainfuck<'a> {
     }
 
     fn gt(&mut self) {
-        self.mem.push(0);
         self.pointer += 1;
+        if self.mem.len() < self.pointer as usize +1 {
+            self.mem.push(0);
+        }
     }
 
     fn plus(&mut self) {
