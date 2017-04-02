@@ -95,27 +95,19 @@ impl<'a> Brainfuck<'a> {
             }
             i += 1;
         }
-        println!("{:?}", self.mem);
     }
 }
 
 
 fn main() {
-    
     let args: Vec<String> = env::args().collect();
-    let path = Path::new(&args[0]);
+    let path = Path::new(&args[1]);
     let mut file = File::open(&path).expect("FILE NOT FOUND");
     let mut file_content = String::new();
-    // file.read_to_string(&mut file_content);
-    // print!("{:?}", file_content);
-
     match file.read_to_string(&mut file_content)  {
-        Err(why)=>panic!("{}",why),
+        Err(why)=>panic!("{} {}",path.display(),why),
         Ok(_)=>print!("{}",file_content),
-    }    ;
-    
-    
-    
+    };    
     let mut bf = Brainfuck::new(&file_content);
     bf.compile();
 }
