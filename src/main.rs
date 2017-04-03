@@ -102,7 +102,7 @@ impl<'a> Brainfuck<'a> {
 fn main() {
     
     let args: Vec<String> = env::args().collect();
-    let path = Path::new(&args[0]);
+    let path = Path::new(&args[1]);
     let mut file = File::open(&path).expect("FILE NOT FOUND");
     let mut file_content = String::new();
     // file.read_to_string(&mut file_content);
