@@ -52,8 +52,6 @@ impl<'a> Brainfuck<'a> {
     }
 
     fn compile(&mut self) {
-        println!("{:?}", self.mem);
-
         self.clean();
         let mut begins: Vec<u8> = Vec::new();
         let mut ends: Vec<u8> = Vec::new();
@@ -106,7 +104,7 @@ fn main() {
     let mut file_content = String::new();
     match file.read_to_string(&mut file_content)  {
         Err(why)=>panic!("{} {}",path.display(),why),
-        Ok(_)=>print!("{}",file_content),
+        Ok(_)=>println!("File Content: {}",file_content),
     };    
     let mut bf = Brainfuck::new(&file_content);
     bf.compile();
