@@ -1,20 +1,18 @@
 use std::env;
 use std::fs::File;
-use std::io::prelude::*;
 use std::path::Path;
 use std::io::Read;
 
 #[derive(Debug)]
-struct Brainfuck<'a> {
-    code: Vec<&'a str>,
-    pointer: u8,
+struct Brainfuck {
+    code: Vec<u8>,
+    pointer: i32,
     mem: Vec<u8>,
 }
-impl<'a> Brainfuck<'a> {
-    fn new(code: &str) -> Brainfuck {
-        let c: Vec<&str> = code.split("").collect();
+impl Brainfuck {
+    fn new(code: Vec<u8>) -> Brainfuck {
         Brainfuck {
-            code: c,
+            code: code,
             pointer: 0,
             mem: vec![0],
         }
@@ -45,37 +43,37 @@ impl<'a> Brainfuck<'a> {
     }
     fn clean(&mut self) {
         self.code.retain(|&c| {
-                             c == "+" || c == "-" || c == "." || c == "!" || c == "," ||
-                             c == "[" || c == "]" ||
-                             c == "<" || c == ">"
+                             c == b'+' || c == b'-' || c == b'.' || c == b'!' || c == b',' ||
+                             c == b'[' || c == b']' ||
+                             c == b'<' || c == b'>'
                          });
     }
 
     fn compile(&mut self) {
         self.clean();
-        let mut begins: Vec<u8> = Vec::new();
-        let mut ends: Vec<u8> = Vec::new();
+        let mut begins: Vec<i32> = Vec::new();
+        let mut ends: Vec<i32> = Vec::new();
         let mut i: usize = 0;
         let op = self.code.clone();
         while op.len() > i {
-            if op[i] == "+" {
+            if op[i] == b'+' {
                 self.plus();
             }
-            if op[i] == "-" {
+            if op[i] == b'-' {
                 self.minus();
             }
-            if op[i] == ">" {
+            if op[i] == b'>' {
                 self.gt();
             }
-            if op[i] == "<" {
+            if op[i] == b'<' {
                 self.lt();
             }
-            if op[i] == "." {
+            if op[i] == b'.' {
                 self.dot();
             }
-            if op[i] == "[" {
+            if op[i] == b'[' {
                 if self.mem[self.pointer as usize] != 0 {
-                    begins.push(i as u8);
+                    begins.push(i as i32);
                 } else {
                     match ends.first() {
                         Some(&index) => i = index as usize,
@@ -84,8 +82,8 @@ impl<'a> Brainfuck<'a> {
                     begins.pop();
                 }
             }
-            if op[i] == "]" {
-                ends.push(i as u8);
+            if op[i] == b']' {
+                ends.push(i as i32);
                 match begins.last() {
                     Some(&index) => i = index as usize - 1,
                     None => println!(""),
@@ -101,11 +99,13 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let path = Path::new(&args[1]);
     let mut file = File::open(&path).expect("FILE NOT FOUND");
-    let mut file_content = String::new();
-    match file.read_to_string(&mut file_content)  {
-        Err(why)=>panic!("{} {}",path.display(),why),
-        Ok(_)=>println!("File Content: {}",file_content),
-    };    
-    let mut bf = Brainfuck::new(&file_content);
+    let mut file_content = Vec::new();
+
+    match file.read_to_end(&mut file_content)  {
+        Err(why)=>panic!("{}",why),
+        Ok(_)=>print!("{}",String::from_utf8_lossy(&file_content)),
+    }    ;
+    
+    let mut bf = Brainfuck::new(file_content);
     bf.compile();
 }
