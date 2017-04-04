@@ -52,7 +52,6 @@ impl Brainfuck {
     fn compile(&mut self) {
         self.clean();
         let mut begins: Vec<i32> = Vec::new();
-        let mut ends: Vec<i32> = Vec::new();
         let mut i: usize = 0;
         let op = self.code.clone();
         while op.len() > i {
@@ -74,21 +73,24 @@ impl Brainfuck {
             if op[i] == b'[' {
                 if self.mem[self.pointer as usize] != 0 {
                     begins.push(i as i32);
-                } else {
-                    match ends.first() {
-                        Some(&index) => i = index as usize,
-                        None => println!(""),
-                    }
+                } 
+                else {
                     begins.pop();
                 }
             }
             if op[i] == b']' {
-                ends.push(i as i32);
-                match begins.last() {
-                    Some(&index) => i = index as usize - 1,
-                    None => println!(""),
-                };
+                if self.mem[self.pointer as usize] != 0 {
+                    match begins.last() {
+                        Some(&index) => {
+                            i = index as usize;
+                        },
+                        None => println!(""),
+                    };
+                }else {
+                    begins.pop();
+                }
             }
+            // println!("{:?}    {:?}      {:?}      {:?}      {:?}    {}  {}",i, op[i] as char, begins, 0, self.mem,self.pointer,self.mem[self.pointer as usize]);
             i += 1;
         }
     }
