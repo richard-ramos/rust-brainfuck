@@ -1,4 +1,4 @@
-### Brainfuck interpreter in Rust (has not completed yet)
+### Brainfuck interpreter in Rust
 
 a simple and exprimental brainfuck interpreter in Rust 
 
